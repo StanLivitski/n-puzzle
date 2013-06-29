@@ -1,0 +1,16 @@
+﻿The files listed below are adaptations of digital images licensed under terms of Creative Commons Attribution-ShareAlike 3.0 Unported license <http://creativecommons.org/licenses/by-sa/3.0/legalcode>.
+
+File(s):	icon.jpg, puzzle_1.jpg
+Author:	Micha L. Rieser, 2007
+Title:	15-puzzle
+URL:	http://commons.wikimedia.org/wiki/File:15-puzzle-01.jpg
+
+File(s):	puzzle_3.jpg
+Author:	Karen Mkrtchyan, 2008
+Title:	Kazansky_s.jpg
+URL:	http://en.wikipedia.org/wiki/File:Kazansky_s.jpg
+
+File(s):	puzzle_5.jpg
+Author:	Elcobbola, 2010
+Title:	Statue of Liberty
+URL:	http://en.wikipedia.org/wiki/File:Statue_of_Liberty_7.jpg

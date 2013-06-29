@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright © 2011,2013 Konstantin Livitski
+
+This file is part of n-Puzzle application. n-Puzzle application is free
+software; you can redistribute it and/or modify it under the terms of the GNU
+General Public License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+n-Puzzle application contains adaptations of artwork covered by the Creative
+Commons Attribution-ShareAlike 3.0 Unported license. Please refer to the
+NOTICE.md file at the root of this distribution or repository for licensing
+terms that apply to that artwork.
+
+n-Puzzle application is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License along with
+n-Puzzle application; if not, see the LICENSE/gpl.txt file of this distribution
+or visit <http://www.gnu.org/licenses>.
+-->
+
+<resources>
+    <string name="app_name">n-Puzzle</string>
+    <string name="image_selection">Puzzle image selection</string>
+    <string name="image_prompt">Please select a picture</string>
+    <string name="image_prompt_delete">Select a picture to delete</string>
+    <string name="image_delete_error">Could not delete that picture.</string>
+    <string name="image_prompt_comment">To add your pictures click Menu button</string>
+    <string name="image_nothing_to_delete_comment">You have no pictures added. Push the BACK button to return.</string>
+	<string name="image_load_progress">Loading picture...</string>
+	<string name="image_load_error">Could not load the picture. Please select another one.</string>
+	<string name="no_gallery_error">Could not find an application that manages pictures on this device.</string>
+    <string name="text_next_puzzle">Play again?</string>
+    <string name="text_puzzle_blurb_1">Need help writing Android app?</string>
+    <string name="text_puzzle_blurb_2">Contact us at <a href="#">http://livitski.com/contact</a>.</string>
+    <string name="text_puzzle_blurb_url">http://livitski.com/contact</string>
+    <string name="add_picture_item">Add picture</string>
+    <string name="del_picture_item">Delete picture</string>
+    <string name="text_congratulations">Congratulations!</string>
+    <string name="text_puzzle_solved">You solved this puzzle in %1$d move%2$s.</string>
+    <string name="ok_button">Ok</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="reshuffle">Reshuffle</string>
+    <string name="change_picture">Change picture</string>
+    <string name="difficulty_easy">Easy (3x3)</string>
+    <string name="difficulty_medium">Medium (4x4)</string>
+    <string name="difficulty_hard">Hard (5x5)</string>
+    <string name="link_author"><a href="#">Libre software by Stan Livitski</a></string>
+    <string name="link_license"><a href="#">View license</a></string>
+</resources>
