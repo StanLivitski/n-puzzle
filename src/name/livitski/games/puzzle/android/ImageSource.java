@@ -41,12 +41,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -90,7 +90,7 @@ public class ImageSource extends BaseAdapter
    else
    {
     view = new ImageView(context);
-    view.setLayoutParams(GRID_CELL_LAYOUT);
+    view.setLayoutParams(getThumbnailSize());
    }
    ((ImageView)view).setImageBitmap(thumbnail);   
   }
@@ -137,7 +137,7 @@ public class ImageSource extends BaseAdapter
     };
     final ImageConverter converter = new ImageConverter(context, thumbnailHandler);
     converter.setImageId(imageId);
-    converter.setMaxFrameDimension(GRID_CELL_MAX);
+    converter.setMaxFrameDimension(getMaxThumbnailSize());
     images[position].setConversionJob(converter);
     context.submitBackgroundTask(converter);
    }
@@ -296,6 +296,26 @@ public class ImageSource extends BaseAdapter
    updateUserImages();
  }
 
+ private int getMaxThumbnailSize()
+ {
+  final LayoutParams size = getThumbnailSize();
+  return size.width > size.height ? size.width : size.height;
+ }
+
+ private LayoutParams getThumbnailSize()
+ {
+  if (null == thumbnailSize)
+  {
+   DisplayMetrics metrics = new DisplayMetrics();
+   context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+   thumbnailSize = new LayoutParams(
+     (int)(metrics.density * GRID_CELL_WIDTH_DP),
+     (int)(metrics.density * GRID_CELL_HEIGHT_DP)
+   );
+  }
+  return thumbnailSize;
+ }
+
  /**
   * Image file name prefix: <code>puzzle_</code>
   */
@@ -308,8 +328,8 @@ public class ImageSource extends BaseAdapter
 
  public static final int MAX_USER_IMAGE_COUNT = 3;
 
- protected static final int GRID_CELL_MAX = 140;
- protected static final LayoutParams GRID_CELL_LAYOUT = new GridView.LayoutParams(GRID_CELL_MAX, 100);
+ protected static final int GRID_CELL_WIDTH_DP = 140;
+ protected static final int GRID_CELL_HEIGHT_DP = 100;
  
  interface ImageWithConstraints
  {
@@ -382,4 +402,5 @@ public class ImageSource extends BaseAdapter
  private BaseAdapter userImageSource;
  private ImageEntry[] images;
  private Map<String, Integer> userImageIndexes;
+ private LayoutParams thumbnailSize;
 }
