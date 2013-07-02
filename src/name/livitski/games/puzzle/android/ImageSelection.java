@@ -210,7 +210,13 @@ public class ImageSelection extends Activity implements AdapterView.OnItemClickL
       if (null != cacheOutput)
        try { cacheOutput.close(); } catch (Exception ignored) {}
       if (null != userImageId)
-       imageSource.onImageUpdate(userImageId);
+       try { imageSource.onImageUpdate(userImageId); }
+       catch (Exception failure)
+       {
+	Log.e(LOG_TAG, "Thumbnail update failed for " + userImageId, failure);
+	if (null == getStatus())
+	 setStatus(failure);
+       }
       getParentHandler().sendEmptyMessage(0);
      }
     }

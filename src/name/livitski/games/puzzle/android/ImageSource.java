@@ -43,10 +43,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -81,67 +83,7 @@ public class ImageSource extends BaseAdapter
  @Override
  public synchronized View getView(final int position, View convertView, ViewGroup parent)
  {
-  View view;
-  Bitmap thumbnail = images[position].getThumbnailCache();
-  if (null != thumbnail)
-  {
-   if (convertView instanceof ImageView)
-    view = convertView;
-   else
-   {
-    view = new ImageView(context);
-    view.setLayoutParams(getThumbnailSize());
-   }
-   ((ImageView)view).setImageBitmap(thumbnail);   
-  }
-  else
-  {
-   if (convertView instanceof ProgressBar)
-    view = convertView;
-   else
-   {
-    view = new ProgressBar(context);
-    ((ProgressBar)view).setIndeterminate(true);
-   }
-   if (null == images[position].getConversionJob())
-   {
-    final Serializable imageId = images[position].getImageId();
-    final Handler thumbnailHandler = new Handler()
-    {
-     @Override
-     public void handleMessage(Message result)
-     {
-      final ImageConverter converter;
-      synchronized (ImageSource.this)
-      {
-       converter = images[position].getConversionJob();
-       images[position].setConversionJob(null);
-      }
-      final Throwable status = converter.getStatus();
-      if (null != status)
-      {
-       String msg = context.getResources().getString(R.string.image_load_error);
-       Log.e(LOG_TAG, msg, status);
-       context.alert(msg);
-      }
-      else
-      {
-       Bitmap thumbnail = converter.getBitmap();
-       synchronized (ImageSource.this)
-       {
-        images[position].setThumbnailCache(thumbnail);
-       }
-       notifyDataSetChanged();
-      }
-     }
-    };
-    final ImageConverter converter = new ImageConverter(context, thumbnailHandler);
-    converter.setImageId(imageId);
-    converter.setMaxFrameDimension(getMaxThumbnailSize());
-    images[position].setConversionJob(converter);
-    context.submitBackgroundTask(converter);
-   }
-  }
+  View view = images[position].getView();
   return view;
  }
 
@@ -291,7 +233,7 @@ public class ImageSource extends BaseAdapter
  {
   Integer index = userImageIndexes.get(userImageId);
   if (null != index)
-   images[index].setThumbnailCache(null);
+   images[index].updateImage();
   else
    updateUserImages();
  }
@@ -357,26 +299,17 @@ public class ImageSource extends BaseAdapter
    return initialComplexity;
   }
 
-  public Bitmap getThumbnailCache()
+  public View getView()
   {
-   // Allow the GC to dispose of thumbnails when low on memory, reload them when needed
-   Bitmap thumbnail = null == this.thumbnailCache ? null : this.thumbnailCache.get();
-   return thumbnail;
+   if (null == frame)
+    initView();
+   return frame;
   }
 
-  public void setThumbnailCache(Bitmap thumbnail)
+  public void updateImage()
   {
-   this.thumbnailCache = new SoftReference<Bitmap>(thumbnail);
-  }
-
-  public ImageConverter getConversionJob()
-  {
-   return conversionJob;
-  }
-
-  public void setConversionJob(ImageConverter conversionJob)
-  {
-   this.conversionJob = conversionJob;
+   this.thumbnailCache = null;
+   this.frame = null;
   }
 
   public ImageEntry(Serializable id)
@@ -389,11 +322,101 @@ public class ImageSource extends BaseAdapter
    this.id = id;
    this.initialComplexity = Game.Level.forBoardSize(initialBoardSize);
   }
+ 
+  private void initView()
+  {
+   frame = new FrameLayout(context);
+   frame.setLayoutParams(getThumbnailSize());
+   Bitmap thumbnail = getThumbnailCache();
+   if (null != thumbnail)
+    showThumbnail(thumbnail);
+   else
+   {
+    showProgress();
+    if (null == conversionJob)
+     beginConversion();
+   }
+ }
+
+  private void showProgress()
+  {
+   ProgressBar view = new ProgressBar(context);
+   FrameLayout.LayoutParams params =
+     new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+   params.gravity = Gravity.CENTER;
+   view.setIndeterminate(true);
+   frame.addView(view, params);
+  }
+
+  private void showThumbnail(Bitmap thumbnail)
+  {
+   ImageView view = new ImageView(context);
+   FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(getThumbnailSize());
+   params.gravity = Gravity.CENTER;
+   view.setImageBitmap(thumbnail);
+   frame.addView(view, params);
+  }
+
+  private void beginConversion()
+  {
+   final Serializable imageId = getImageId();
+   final Handler thumbnailHandler = new Handler()
+   {
+    @Override
+    public void handleMessage(Message result)
+    {
+     final ImageConverter converter;
+     synchronized (ImageSource.this)
+     {
+      converter = conversionJob;
+      conversionJob = null;
+     }
+     final Throwable status = converter.getStatus();
+     if (null != status)
+     {
+      String msg = context.getResources().getString(R.string.image_load_error);
+      Log.e(LOG_TAG, msg, status);
+      context.alert(msg);
+     }
+     else
+     {
+      Bitmap thumbnail = converter.getBitmap();
+      synchronized (ImageSource.this)
+      {
+       setThumbnailCache(thumbnail);
+       if (null != frame)
+       {
+	frame.removeAllViews();
+	showThumbnail(thumbnail);
+       }
+      }
+     }
+    }
+   };
+   final ImageConverter converter = new ImageConverter(context, thumbnailHandler);
+   converter.setImageId(imageId);
+   converter.setMaxFrameDimension(getMaxThumbnailSize());
+   this.conversionJob = converter;
+   context.submitBackgroundTask(converter);
+  }
+  
+  private Bitmap getThumbnailCache()
+  {
+   // Allow the GC to dispose of thumbnails when low on memory, reload them when needed
+   Bitmap thumbnail = null == this.thumbnailCache ? null : this.thumbnailCache.get();
+   return thumbnail;
+  }
+
+  private void setThumbnailCache(Bitmap thumbnail)
+  {
+   this.thumbnailCache = new SoftReference<Bitmap>(thumbnail);
+  }
 
   private Serializable id;
   private Game.Level initialComplexity;
   private Reference<Bitmap> thumbnailCache;
   private ImageConverter conversionJob;
+  private FrameLayout frame;
  }
 
  private static final String LOG_TAG = "ImageSource";
