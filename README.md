@@ -1,4 +1,29 @@
 <a name="sec-about"> </a>
+About n-Puzzle
+==============
+
+*n-Puzzle* app is a classic sliding puzzle game based on the
+[Fifteen Puzzle](http://en.wikipedia.org/wiki/15_puzzle). It allows you
+to choose among three levels of complexity: 3x3 (8-puzzle), 4x4 (15-puzzle),
+and 5x5 (24-puzzle), hence the name.
+
+In addition to standard square boards with numbers, you can choose a board
+with a picture painted on it. There are three stock pictures installed with the
+puzzle, and you can add your own pictures by pressing `Menu` button when the
+picture selection page is displayed. The picture you select will be split into
+equal tiles.
+
+Once you select the picture, the solved puzzle is displayed for 3 seconds.
+Then it is randomly shuffled, and you have to move the tiles to their initial
+locations. When you solve the puzzle, the app will display that picture again
+along with the number of moves you have made.
+
+To change the puzzle's settings during the game, press `Menu` button. Note that
+when you change any settings, the game starts over. When you switch apps or
+exit during the game, your puzzle is stored and resumed next time you run
+*n-Puzzle*.
+
+<a name="sec-repo"> </a>
 About this repository
 =====================
 
