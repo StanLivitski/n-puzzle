@@ -1,3 +1,5 @@
+**[To download and play the game, click here](https://github.com/StanLivitski/n-puzzle/wiki/Download)**
+
 <a name="sec-about"> </a>
 About n-Puzzle
 ==============
